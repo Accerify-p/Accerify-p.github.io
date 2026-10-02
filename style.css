@@ -23,16 +23,20 @@ canvas{display:block;position:fixed;inset:0;z-index:0}
 #skillBtn.cool{background:radial-gradient(circle at 30% 30%,#555,#222);border-color:#333;box-shadow:none;color:#aaa;font-size:16px}
 #skillBtn.shield{background:radial-gradient(circle at 30% 30%,#8cf,#25a);border-color:#4af;box-shadow:0 0 30px rgba(74,170,255,.85)}
 
-.boss-bar{position:absolute;bottom:75px;left:50%;transform:translateX(-50%);
- width:72%;max-width:620px;height:15px;display:flex;gap:3px;opacity:0;transition:opacity .3s;pointer-events:none}
+.boss-bar{position:absolute;top:106px;left:16px;width:200px;height:9px;display:flex;gap:2px;
+ opacity:0;transition:opacity .35s;pointer-events:none;padding:1.5px;
+ background:rgba(0,0,0,.55);border:1px solid rgba(246,106,170,.35);border-radius:5px;
+ box-shadow:0 0 12px rgba(246,106,170,.35),inset 0 0 6px rgba(0,0,0,.7)}
 .boss-bar.show{opacity:1}
-.boss-bar .seg{flex:1;background:rgba(0,0,0,.65);border-radius:3px;overflow:hidden;
- box-shadow:0 0 12px rgba(246,106,170,.35)}
+.boss-bar .seg{flex:1;background:rgba(0,0,0,.75);border-radius:3px;overflow:hidden}
 .boss-bar .seg i{display:block;height:100%;width:100%;
- background:linear-gradient(90deg,#f55,#f6a,#ff3);transition:width .12s}
-.boss-bar .seg.done{opacity:.32}
-.boss-label{position:absolute;bottom:55px;left:50%;transform:translateX(-50%);
- color:#f6a;font-size:12px;font-weight:600;text-shadow:0 0 8px rgba(246,106,170,.7);opacity:0}
+ background:linear-gradient(180deg,#ff8,#f6a 45%,#f55);transition:width .12s;
+ box-shadow:0 0 8px rgba(246,106,170,.8)}
+.boss-bar .seg.done{opacity:.3}
+.boss-bar .seg.done i{background:#555;box-shadow:none}
+.boss-label{position:absolute;top:120px;left:16px;color:#f6a;font-size:11px;
+ font-weight:600;letter-spacing:.5px;text-shadow:0 0 6px rgba(246,106,170,.85);
+ opacity:0;transition:opacity .3s}
 .boss-label.show{opacity:1}
 
 .overlay{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;
