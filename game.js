@@ -27,8 +27,8 @@ function au(){
   lg.connect(o.frequency);
   l.start();
  }
- if(ac.state==='suspended')ac.resume();
- playBgm();
+  if(ac.state==='suspended')ac.resume();
+ if(!bgm||bgm.paused)playBgm();
 }
 function playBgm(){
  if(!bgm){
@@ -37,8 +37,7 @@ function playBgm(){
   bgm.volume=.4;
   bgm.addEventListener('error',()=>console.warn('bgm.mp3 加载失败'));
  }
- const p=bgm.play();
- if(p&&p.catch)p.catch(e=>console.warn('BGM 被拦截:',e.message));
+ bgm.play().catch(e=>console.warn('BGM 被拦截:',e.message));
 }
 function tryResumeBgm(){
  if(bgm&&bgm.paused&&state==='play'){
@@ -224,7 +223,7 @@ function loop(ts){
   if(!boss&&!bossSpawned&&tm>=BOSS_TIME)spawnBoss();
   if(!boss&&!bossSpawned){
    spT+=dt;
-   if(spT>Math.max(22,66-score/80)/dd[diff]){spT=0;
+   if(spT>Math.max(36,88-score/80)/dd[diff]){spT=0;
     let s=14+Math.random()*14;
     if(Math.random()<0.08){let h=2*hpMul;
      enemies.push({x:s+Math.random()*(W-2*s),y:-s,r:s+4,v:.9+Math.random()*.3,cd:999,type:'s',ph:Math.random()*6.28,hp:h,maxHp:h,flash:0,heal:1})}
