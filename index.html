@@ -272,11 +272,21 @@ function handleBtn(e){
  var el=e.target;
  while(el&&el!==document){
   if(el.dataset){
-if(el.dataset.d!==undefined){
- au();diff=+el.dataset.d;reset();setState('play');
- if(bgm){bgm.currentTime=0;var pr=bgm.play();if(pr&&pr.catch)pr.catch(function(){})}
- return;
-}
+   if(el.dataset.d!==undefined){
+    au();diff=+el.dataset.d;reset();setState('play');
+    if(bgm){bgm.currentTime=0;var pr=bgm.play();if(pr&&pr.catch)pr.catch(function(){})}
+    return;
+   }
+   if(el.dataset.a){
+    au();
+    var target=el.dataset.a;
+    if(target==='board'){setState('board')}
+    else{
+     setState('menu');
+     if(bgm){bgm.pause();bgm.currentTime=0}
+    }
+    return;
+   }
   }
   el=el.parentNode;
  }
