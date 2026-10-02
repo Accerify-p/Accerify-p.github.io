@@ -27,7 +27,7 @@ function au(){
   lg.connect(o.frequency);
   l.start();
  }
-  if(ac.state==='suspended')ac.resume();
+ if(ac.state==='suspended')ac.resume();
  if(!bgm||bgm.paused)playBgm();
 }
 function playBgm(){
@@ -39,14 +39,6 @@ function playBgm(){
  }
  bgm.play().catch(e=>console.warn('BGM 被拦截:',e.message));
 }
-function tryResumeBgm(){
- if(bgm&&bgm.paused&&state==='play'){
-  bgm.play().catch(()=>{});
- }
-}
-document.addEventListener('touchstart',tryResumeBgm,{passive:true});
-document.addEventListener('mousedown',tryResumeBgm);
-
 function bp(f,d,v,type,slide){
  if(!ac)return;
  let o=ac.createOscillator(),n=ac.createGain();
@@ -106,10 +98,10 @@ function saveScore(){let b=board();b.push({score,kills,time:+tm.toFixed(1),diff:
 function use(){if(cd<=0&&sh<=0&&state==='play'){sh=300;cd=1200;bp(380,.32,.04,'sine',950);burst(p.x,p.y,'#4af',14,5)}}
 dom.skill.onclick=e=>{e.preventDefault();au();use()};
 document.querySelectorAll('[data-d]').forEach(btn=>{
- btn.onclick=()=>{au();playBgm();diff=+btn.dataset.d;reset();setState('play')};
+ btn.onclick=()=>{au();diff=+btn.dataset.d;reset();setState('play');playBgm()};
 });
 document.querySelectorAll('[data-a]').forEach(btn=>{
- btn.onclick=()=>{au();playBgm();setState(btn.dataset.a==='board'?'board':'menu')};
+ btn.onclick=()=>{au();setState(btn.dataset.a==='board'?'board':'menu');playBgm()};
 });
 
 function setPos(x,y,off){p.x=Math.max(p.r,Math.min(W-p.r,x));p.y=Math.max(p.r,Math.min(H-p.r,y-off))}
@@ -150,21 +142,21 @@ function updateBoss(dt){
 function bossFire(){
  const sp=3.3+diff*0.4,dx=p.x-boss.x,dy=p.y-boss.y,base=Math.atan2(dy,dx),r=Math.random();
  if(boss.phase===0){
-  if(r<0.4){for(let a=-0.7;a<=0.71;a+=0.35)eb.push({x:boss.x,y:boss.y+20,vx:Math.cos(base+a)*sp,vy:Math.sin(base+a)*sp,big:1,co:'#f6a'});boss.cd=34}
-  else if(r<0.75){for(let i=0;i<14;i++){let a=boss.t*0.04+i*6.28/14;eb.push({x:boss.x,y:boss.y,vx:Math.cos(a)*sp*0.8,vy:Math.sin(a)*sp*0.8,big:1,co:'#c6f'})}boss.cd=38}
-  else{for(let i=0;i<6;i++){let a=i*6.28/6+boss.t*0.08;for(let k=0;k<2;k++)eb.push({x:boss.x,y:boss.y,vx:Math.cos(a+k*3.14)*sp*.9,vy:Math.sin(a+k*3.14)*sp*.9,big:1,co:'#ff3'})}boss.cd=42}
+  if(r<0.4){for(let a=-0.7;a<=0.71;a+=0.35)eb.push({x:boss.x,y:boss.y+20,vx:Math.cos(base+a)*sp,vy:Math.sin(base+a)*sp,big:1,co:'#f6a'});boss.cd=42}
+  else if(r<0.75){for(let i=0;i<14;i++){let a=boss.t*0.04+i*6.28/14;eb.push({x:boss.x,y:boss.y,vx:Math.cos(a)*sp*0.8,vy:Math.sin(a)*sp*0.8,big:1,co:'#c6f'})}boss.cd=46}
+  else{for(let i=0;i<6;i++){let a=i*6.28/6+boss.t*0.08;for(let k=0;k<2;k++)eb.push({x:boss.x,y:boss.y,vx:Math.cos(a+k*3.14)*sp*.9,vy:Math.sin(a+k*3.14)*sp*.9,big:1,co:'#ff3'})}boss.cd=50}
  }else if(boss.phase===1){
-  if(r<0.3){for(let i=0;i<22;i++){let a=boss.t*0.06+i*6.28/22;eb.push({x:boss.x,y:boss.y,vx:Math.cos(a)*sp*0.9,vy:Math.sin(a)*sp*0.9,big:1,co:'#c6f'})}boss.cd=36}
-  else if(r<0.55){for(let a=-0.5;a<=0.51;a+=0.15)eb.push({x:boss.x,y:boss.y+20,vx:Math.cos(base+a)*sp*1.1,vy:Math.sin(base+a)*sp*1.1,big:1,co:'#ff3'});boss.cd=32}
-  else if(r<0.8){for(let i=-1;i<=1;i++){let off=i*30;eb.push({x:boss.x+off,ox:boss.x+off,y:boss.y+20,vx:0,vy:sp*0.9,ph:i*1.5,ty:'w',big:1,co:'#8cf'})}boss.cd=36}
-  else{for(let i=-1;i<=1;i++){let a=base+i*0.25;eb.push({x:boss.x,y:boss.y+20,vx:Math.cos(a)*sp*1.3,vy:Math.sin(a)*sp*1.3,big:1,co:'#f55'})}boss.cd=38}
+  if(r<0.3){for(let i=0;i<22;i++){let a=boss.t*0.06+i*6.28/22;eb.push({x:boss.x,y:boss.y,vx:Math.cos(a)*sp*0.9,vy:Math.sin(a)*sp*0.9,big:1,co:'#c6f'})}boss.cd=44}
+  else if(r<0.55){for(let a=-0.5;a<=0.51;a+=0.15)eb.push({x:boss.x,y:boss.y+20,vx:Math.cos(base+a)*sp*1.1,vy:Math.sin(base+a)*sp*1.1,big:1,co:'#ff3'});boss.cd=40}
+  else if(r<0.8){for(let i=-1;i<=1;i++){let off=i*30;eb.push({x:boss.x+off,ox:boss.x+off,y:boss.y+20,vx:0,vy:sp*0.9,ph:i*1.5,ty:'w',big:1,co:'#8cf'})}boss.cd=44}
+  else{for(let i=-1;i<=1;i++){let a=base+i*0.25;eb.push({x:boss.x,y:boss.y+20,vx:Math.cos(a)*sp*1.3,vy:Math.sin(a)*sp*1.3,big:1,co:'#f55'})}boss.cd=46}
  }else{
-  if(r<0.25){for(let i=0;i<8;i++){let a=boss.t*0.18+i*6.28/8;eb.push({x:boss.x,y:boss.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,big:1,co:'#f55'})}for(let a=-0.25;a<=0.26;a+=0.12)eb.push({x:boss.x,y:boss.y+20,vx:Math.cos(base+a)*sp*1.35,vy:Math.sin(base+a)*sp*1.35,big:1,co:'#ff3'});boss.cd=28}
-  else if(r<0.5){for(let i=0;i<30;i++){let a=boss.t*0.08+i*6.28/30;eb.push({x:boss.x,y:boss.y,vx:Math.cos(a)*sp*0.95,vy:Math.sin(a)*sp*0.95,big:1,co:'#f6a'})}boss.cd=34}
-  else if(r<0.75){for(let a=-0.7;a<=0.71;a+=0.15)eb.push({x:boss.x,y:boss.y+20,vx:Math.cos(base+a)*sp*1.2,vy:Math.sin(base+a)*sp*1.2,big:1,co:'#ff3'});for(let i=0;i<10;i++){let a=boss.t*0.14+i*6.28/10;eb.push({x:boss.x,y:boss.y,vx:Math.cos(a)*sp*0.6,vy:Math.sin(a)*sp*0.6,big:1,co:'#f55'})}boss.cd=30}
-  else{for(let i=-1;i<=1;i++)eb.push({x:boss.x+i*45,y:boss.y+20,vx:0,vy:sp*2.1,big:1,co:'#ff0'});boss.cd=26}}
+  if(r<0.25){for(let i=0;i<8;i++){let a=boss.t*0.18+i*6.28/8;eb.push({x:boss.x,y:boss.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,big:1,co:'#f55'})}for(let a=-0.25;a<=0.26;a+=0.12)eb.push({x:boss.x,y:boss.y+20,vx:Math.cos(base+a)*sp*1.35,vy:Math.sin(base+a)*sp*1.35,big:1,co:'#ff3'});boss.cd=36}
+  else if(r<0.5){for(let i=0;i<30;i++){let a=boss.t*0.08+i*6.28/30;eb.push({x:boss.x,y:boss.y,vx:Math.cos(a)*sp*0.95,vy:Math.sin(a)*sp*0.95,big:1,co:'#f6a'})}boss.cd=42}
+  else if(r<0.75){for(let a=-0.7;a<=0.71;a+=0.15)eb.push({x:boss.x,y:boss.y+20,vx:Math.cos(base+a)*sp*1.2,vy:Math.sin(base+a)*sp*1.2,big:1,co:'#ff3'});for(let i=0;i<10;i++){let a=boss.t*0.14+i*6.28/10;eb.push({x:boss.x,y:boss.y,vx:Math.cos(a)*sp*0.6,vy:Math.sin(a)*sp*0.6,big:1,co:'#f55'})}boss.cd=38}
+  else{for(let i=-1;i<=1;i++)eb.push({x:boss.x+i*45,y:boss.y+20,vx:0,vy:sp*2.1,big:1,co:'#ff0'});boss.cd=34}}
  bp(240,.07,.013,'sine',190)}
-function hurt(){if(inv>0||state!=='play'||sh>0)return;lives--;inv=90;bp(150,.22,.045,'triangle',70);burst(p.x,p.y,'#f66',10,4);if(lives<=0){state='over';saveScore();dom.overStat.textContent=`难度 ${dn[diff]} · 得分 ${score} · 击败 ${kills} · 存活 ${tm.toFixed(1)}s`;setState('over');if(bgm)bgm.pause()}}
+function hurt(){if(inv>0||state!=='play'||sh>0)return;lives--;inv=90;bp(150,.22,.045,'triangle',70);burst(p.x,p.y,'#f66',10,4);if(lives<=0){state='over';saveScore();dom.overStat.textContent=`难度 ${dn[diff]} · 得分 ${score} · 击败 ${kills} · 存活 ${tm.toFixed(1)}s`;setState('over');if(bgm){bgm.pause();bgm.currentTime=0}}}
 
 let hudCache={};
 function updateHUD(){
@@ -212,7 +204,7 @@ function loop(ts){
   if(inv>0)inv-=dt;if(sh>0)sh-=dt;if(cd>0)cd-=dt;if(warnT>0)warnT-=dt;if(healFx>0)healFx-=dt;
   let lv=1+Math.floor(score/LV_STEP);
   if(lv>prevLv){if(lv>6&&lives<maxLives){lives++;healFx=30;bp(880,.28,.038,'sine',1600)}prevLv=lv}
-  let fireGap=Math.max(4,9-Math.min(lv,6));
+  let fireGap=Math.max(3,11-Math.min(lv*1.4,8));
   let dmg=Math.min(5,1+Math.floor((lv-1)/2));
   let hpMul=1+Math.floor(score/2500);
   fireT+=dt;
@@ -221,19 +213,19 @@ function loop(ts){
    for(let i=0;i<n;i++){let off=(i-(n-1)/2)*13;bullets.push({x:p.x+off,y:p.y-p.r,vx:off*.12,dmg:dmg})}
    bp(660,.06,.016,'sine',480)}
   if(!boss&&!bossSpawned&&tm>=BOSS_TIME)spawnBoss();
-  if(!boss&&!bossSpawned){
+  if(!bossSpawned){
    spT+=dt;
-   if(spT>Math.max(36,88-score/80)/dd[diff]){spT=0;
+   if(spT>Math.max(32,88-score/100)/dd[diff]){spT=0;
     let s=14+Math.random()*14;
-    if(Math.random()<0.08){let h=2*hpMul;
+    if(Math.random()<0.12){let h=2*hpMul;
      enemies.push({x:s+Math.random()*(W-2*s),y:-s,r:s+4,v:.9+Math.random()*.3,cd:999,type:'s',ph:Math.random()*6.28,hp:h,maxHp:h,flash:0,heal:1})}
-    else{const type=pools[diff][Math.floor(Math.random()*pools[diff].length)];let h=cfg[type].hp*hpMul;
+    else if(!boss){const type=pools[diff][Math.floor(Math.random()*pools[diff].length)];let h=cfg[type].hp*hpMul;
      enemies.push({x:s+Math.random()*(W-2*s),y:-s,r:s,v:1.1+Math.random()*.8+Math.min(score/900,1),cd:45+Math.random()*45,type,ph:Math.random()*6.28,hp:h,maxHp:h,flash:0})}}}
   for(let i=0;i<enemies.length;i++){let e=enemies[i];
    e.cd-=dt;e.ph+=.05*dt;e.x+=Math.sin(e.ph)*2.2*dt;
    if(e.flash>0)e.flash-=dt;
    if(e.x<e.r)e.x=e.r;if(e.x>W-e.r)e.x=W-e.r;
-   if(e.cd<=0&&e.y>0){let lateBonus=Math.min(score/2500,2);e.cd=(Math.max(22,50-score/250-lateBonus)+Math.random()*12)*dc[diff];efire(e)}}
+   if(e.cd<=0&&e.y>0){let lateBonus=Math.min(score/3000,2);e.cd=(Math.max(34,70-score/300-lateBonus)+Math.random()*14)*dc[diff];efire(e)}}
   updateBoss(dt);
   for(let i=0;i<bullets.length;i++){let b=bullets[i];b.y-=10*dt;b.x+=b.vx*dt}
   for(let i=0;i<enemies.length;i++)enemies[i].y+=enemies[i].v*dt;
