@@ -16,31 +16,36 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05070f;
 .score-line{font-size:18px;font-weight:700;text-shadow:0 0 12px rgba(74,170,255,.8)}
 .score-line b{color:#8cf}
 .meta-line{font-size:12px;color:#8cf;opacity:.9}
-.xp-bar{width:160px;height:6px;background:rgba(0,0,0,.55);border-radius:3px;overflow:hidden}
+.xp-bar{width:180px;height:7px;background:rgba(0,0,0,.55);border-radius:4px;overflow:hidden}
 .xp-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4af,#8cf);transition:width .15s}
+#hEnergyBar i{background:linear-gradient(90deg,#fd6,#ff0,#fd6) !important}
 .boss-cd{font-size:11px;color:#f6a;min-height:14px}
 .lives{position:absolute;top:14px;right:14px;font-size:18px;letter-spacing:1px}
 .lives span{color:#f66;text-shadow:0 0 8px rgba(255,102,102,.85)}
 .lives span.off{color:#333;text-shadow:none}
-#skillBtn{position:absolute;right:16px;bottom:24px;width:74px;height:74px;border-radius:50%;
+#skillBtn{position:absolute;right:16px;bottom:24px;width:78px;height:78px;border-radius:50%;
  border:2px solid #2a8;background:radial-gradient(circle at 30% 30%,#6fd,#186);
  color:#fff;font-size:22px;font-weight:700;pointer-events:auto;font-family:inherit;
  box-shadow:0 0 20px rgba(42,168,136,.6);outline:none}
-#skillBtn.cool{background:radial-gradient(circle at 30% 30%,#555,#222);
- border-color:#333;box-shadow:none;color:#aaa;font-size:15px}
 #skillBtn.shield{background:radial-gradient(circle at 30% 30%,#8cf,#25a);
  border-color:#4af;box-shadow:0 0 26px rgba(74,170,255,.85)}
-.boss-bar{position:absolute;top:100px;left:14px;width:190px;height:9px;display:none;gap:2px;
- padding:1.5px;background:rgba(0,0,0,.55);border:1px solid rgba(246,106,170,.35);
- border-radius:5px}
+#skillBtn.ready{background:radial-gradient(circle at 30% 30%,#ff8,#fd6);
+ border-color:#ff0;color:#420;box-shadow:0 0 32px rgba(255,220,80,.95);
+ animation:pulse 1s infinite alternate}
+@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+.boss-bar{position:absolute;top:104px;left:14px;right:14px;height:20px;display:none;gap:4px;
+ padding:3px;background:rgba(0,0,0,.65);border:2px solid rgba(246,106,170,.5);
+ border-radius:8px;box-shadow:0 0 18px rgba(246,106,170,.45)}
 .boss-bar.show{display:flex}
-.boss-bar .seg{flex:1;background:rgba(0,0,0,.75);border-radius:3px;overflow:hidden}
+.boss-bar .seg{flex:1;background:rgba(0,0,0,.8);border-radius:5px;overflow:hidden}
 .boss-bar .seg i{display:block;height:100%;width:100%;
  background:linear-gradient(180deg,#ff8,#f6a 45%,#f55);transition:width .12s}
 .boss-bar .seg.done{opacity:.3}
 .boss-bar .seg.done i{background:#555}
-.boss-label{position:absolute;top:114px;left:14px;color:#f6a;font-size:11px;
- font-weight:600;display:none}
+.boss-label{position:absolute;top:130px;left:14px;color:#f6a;font-size:13px;
+ font-weight:700;letter-spacing:1px;display:none;
+ text-shadow:0 0 8px rgba(246,106,170,.9)}
 .boss-label.show{display:block}
 
 .overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:10;display:none;
@@ -140,6 +145,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05070f;
     <div class="score-line">分数 <b id="hScore">0</b></div>
     <div class="meta-line" id="hMeta">Lv1/7 · DMG1 · 简单</div>
     <div class="xp-bar"><i id="hXp"></i></div>
+    <div class="xp-bar" id="hEnergyBar"><i id="hEnergy"></i></div>
     <div class="boss-cd" id="hBossCd"></div>
   </div>
   <div class="lives" id="hLives"></div>
@@ -205,6 +211,7 @@ var dom={
  boardTable:$('boardTable'),overBoard:$('overBoard'),overStat:$('overStat'),
  winStat:$('winStat'),winBoard:$('winBoard'),
  hScore:$('hScore'),hMeta:$('hMeta'),hXp:$('hXp'),
+ hEnergy:$('hEnergy'),
  hLives:$('hLives'),hBossCd:$('hBossCd'),
  skill:$('skillBtn'),bossBar:$('bossBar'),bossLabel:$('bossLabel')
 };
@@ -283,13 +290,13 @@ function getDmg(lv){return Math.min(5,1+Math.floor((lv-1)*0.7))}
 
 var diff=0,state='menu',prevLv=1;
 var p={x:0,y:0,r:16,hr:10},bullets=[],enemies=[],eb=[],score=0,fireT=0,spT=0,hold=false,
- lives=3,maxLives=7,inv=0,sh=0,cd=0,kills=0,tm=0,boss=null,bossDefeated=0,
+ lives=3,maxLives=7,inv=0,sh=0,energy=0,energyMax=100,kills=0,tm=0,boss=null,bossDefeated=0,
  nextBossTime=60,bossCount=0,warnT=0,healFx=0;
 
 function reset(){
  p.x=W/2;p.y=H-90;
  bullets=[];enemies=[];eb=[];parts=[];rings=[];
- score=0;fireT=0;spT=0;lives=3;inv=0;sh=0;cd=0;kills=0;tm=0;
+ score=0;fireT=0;spT=0;lives=3;inv=0;sh=0;energy=0;kills=0;tm=0;
  boss=null;bossDefeated=0;nextBossTime=60;bossCount=0;warnT=0;healFx=0;prevLv=1;
  shakePower=0;
 }
@@ -326,10 +333,48 @@ function saveScore(){
 }
 
 function use(){
- if(cd<=0&&sh<=0&&state==='play'){
-  sh=300;cd=1200;bp(380,.32,.04,'sine',950);
-  explode(p.x,p.y,'#4af',20,6);
-  shock(p.x,p.y,'#4af',2);
+ if(energy>=energyMax&&state==='play'){
+  energy=0;
+  sh=180;
+  bp(380,.32,.04,'sine',950);
+  explode(p.x,p.y,'#4af',26,8);
+  shock(p.x,p.y,'#4af',3);
+  screenShake(16);
+  for(var i=enemies.length-1;i>=0;i--){
+   var e=enemies[i];
+   explode(e.x,e.y,cfg[e.type].co,14,6);
+   shock(e.x,e.y,cfg[e.type].co,1);
+   kills++;
+  }
+  enemies.length=0;
+  if(boss){
+   boss.phaseHp-=60;
+   boss.flash=8;
+   if(boss.phaseHp<=0){
+    boss.phase++;
+    if(boss.phase>=boss.phases){
+     score+=500+100*boss.num;kills++;
+     explode(boss.x,boss.y,'#f6a',26,10);explode(boss.x,boss.y,'#ff3',22,8);
+     shock(boss.x,boss.y,'#f6a',3);shock(boss.x,boss.y,'#ff3',2);
+     screenShake(20);
+     bp(95,1,.07,'sawtooth',30);
+     boss=null;bossDefeated++;
+     if(bossDefeated>=MAX_BOSS){
+      saveScore();
+      dom.winStat.textContent='难度 '+dn[diff]+' · 得分 '+score+' · 击败 '+kills+' · 存活 '+tm.toFixed(1)+'s · 全部 '+MAX_BOSS+' 个 BOSS 已击破！';
+      setState('win');
+      if(bgm){bgm.pause();bgm.currentTime=0}
+     }else{nextBossTime=tm+60}
+    }else{
+     score+=150;
+     boss.phaseHp=boss.phaseMax;
+     bp(200,.45,.048,'sawtooth',400);
+     explode(boss.x,boss.y,'#f6a',24,8);shock(boss.x,boss.y,'#f6a',2);
+     screenShake(12);
+     boss.cd=30;
+    }
+   }
+  }
  }
 }
 
@@ -501,10 +546,15 @@ function updateHUD(){
   var h='';for(i=0;i<maxLives;i++)h+='<span class="'+(i<lives?'':'off')+'">♥</span>';
   dom.hLives.innerHTML=h;hudCache.lives=lives;
  }
- var st=sh>0?'shield':(cd>0?'cool':'');
+ var st=sh>0?'shield':(energy>=energyMax?'ready':'');
  if(hudCache.skill!==st){dom.skill.className=st;hudCache.skill=st}
- var stt=sh>0?Math.ceil(sh/60):(cd>0?Math.ceil(cd/60):'⚡');
+ var stt=sh>0?'⚡':(energy>=energyMax?'✓':'⚡');
  if(hudCache.stt!==stt){dom.skill.textContent=stt;hudCache.stt=stt}
+ var epr=Math.min(1,energy/energyMax);
+ if(hudCache.energy!==energy){
+  dom.hEnergy.style.width=(epr*100)+'%';
+  hudCache.energy=energy;
+ }
  if(boss){
   if(!hudCache.bossShow){dom.bossBar.classList.add('show');dom.bossLabel.classList.add('show');hudCache.bossShow=true}
   var segs=dom.bossBar.children;
@@ -543,7 +593,7 @@ function loop(ts){
   if(keys['d']||keys['arrowright'])p.x+=spd*dt;
   p.x=Math.max(p.r,Math.min(W-p.r,p.x));
   p.y=Math.max(p.r,Math.min(H-p.r,p.y));
-  if(inv>0)inv-=dt;if(sh>0)sh-=dt;if(cd>0)cd-=dt;if(warnT>0)warnT-=dt;if(healFx>0)healFx-=dt;
+  if(inv>0)inv-=dt;if(sh>0)sh-=dt;if(warnT>0)warnT-=dt;if(healFx>0)healFx-=dt;
   var lv=getLv(score);
   if(lv>prevLv){if(lv>6&&lives<maxLives){lives++;healFx=30;bp(880,.28,.038,'sine',1600)}prevLv=lv}
   var fireGap=getFireGap(lv),dmg=getDmg(lv),spread=getSpread(lv);
@@ -591,7 +641,7 @@ function loop(ts){
      burst(bb.x,bb.y,'#4df',4);bp(1400,.02,.006,'sine',1100);
      if(en.hp<=0){
       if(en.heal){if(lives<maxLives){lives++;healFx=30}explode(en.x,en.y,'#4f8',20,7);shock(en.x,en.y,'#4f8',2);bp(880,.28,.038,'sine',1600)}
-      else{score+=cfg[en.type].sc;explode(en.x,en.y,cfg[en.type].co,14,6);shock(en.x,en.y,cfg[en.type].co,1);bp(780,.1,.022,'triangle',1100)}
+      else{score+=cfg[en.type].sc;energy=Math.min(energyMax,energy+5);explode(en.x,en.y,cfg[en.type].co,14,6);shock(en.x,en.y,cfg[en.type].co,1);bp(780,.1,.022,'triangle',1100)}
       kills++;enemies.splice(j,1);
      }
      hit=true;break;
@@ -605,7 +655,7 @@ function loop(ts){
      bullets.splice(i,1);boss.phaseHp-=b3.dmg;boss.flash=5;
      boss.dmgAcc+=b3.dmg;
      var gained=Math.floor(boss.dmgAcc/3);
-     if(gained>0){score+=gained;boss.dmgAcc-=gained*3}
+     if(gained>0){score+=gained;energy=Math.min(energyMax,energy+gained);boss.dmgAcc-=gained*3}
      burst(b3.x,b3.y,'#4df',4);bp(1400,.025,.008,'sine',1000);
      if(boss.phaseHp<=0){
       boss.phase++;
@@ -784,7 +834,7 @@ function loop(ts){
   g.beginPath();g.ellipse(0,-p.r*.3,p.r*.25,p.r*.45,0,0,6.284);g.fill();
   g.globalCompositeOperation='source-over';g.shadowBlur=0;g.restore()}
 
- if(sh>0){var pl=(300-sh)*.1;
+ if(sh>0){var pl=(180-sh)*.15;
   g.globalCompositeOperation='lighter';
   for(var si=0;si<3;si++){
    g.beginPath();g.arc(p.x,p.y,p.r+8+si*7+Math.sin(pl+si)*3,0,6.284);
